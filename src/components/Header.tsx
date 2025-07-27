@@ -20,11 +20,11 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-2 rounded-lg">
               <Terminal className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">DevOpsForAll</h1>
+              <h1 className="text-xl font-bold text-gray-900">DevOps for Everyone</h1>
               <p className="text-xs text-gray-500">Learn by Doing</p>
             </div>
           </Link>
@@ -34,8 +34,8 @@ export function Header() {
               to="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/') 
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  ? 'text-emerald-600 bg-emerald-50' 
+                  : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
               }`}
             >
               Home
@@ -46,8 +46,8 @@ export function Header() {
                   to="/labs"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive('/labs') 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                      ? 'text-emerald-600 bg-emerald-50' 
+                      : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
                   }`}
                 >
                   Labs
@@ -56,8 +56,8 @@ export function Header() {
                   to="/profile"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive('/profile') 
-                      ? 'text-blue-600 bg-blue-50' 
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                      ? 'text-emerald-600 bg-emerald-50' 
+                      : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
                   }`}
                 >
                   Profile
@@ -67,8 +67,8 @@ export function Header() {
                     to="/admin"
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive('/admin') 
-                        ? 'text-blue-600 bg-blue-50' 
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                        ? 'text-emerald-600 bg-emerald-50' 
+                        : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
                     }`}
                   >
                     <Settings className="h-4 w-4 inline mr-1" />
@@ -98,13 +98,13 @@ export function Header() {
               <div className="flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105"
+                  className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-medium rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all transform hover:scale-105"
                 >
                   Get Started
                 </Link>
