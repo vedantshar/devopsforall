@@ -58,7 +58,26 @@ const labs: Lab[] = [
     difficulty: 'beginner',
     estimatedTime: 30,
     instructions: 'You are investigating a production issue. Analyze server logs to find error patterns, count occurrences, and extract specific information using grep, awk, and other text processing tools.',
-    starterCode: '#!/bin/bash\n\n# Create a sample log file for analysis\ncat > server.log << EOF\n2024-01-15 10:30:15 INFO User login successful: user123\n2024-01-15 10:31:22 ERROR Database connection failed\n2024-01-15 10:32:10 INFO User logout: user123\n2024-01-15 10:33:45 ERROR API timeout: /api/users\n2024-01-15 10:34:12 WARN Memory usage high: 85%\n2024-01-15 10:35:30 ERROR Database connection failed\nEOF\n\n# Your analysis commands:\n# 1. Find all ERROR entries\n# 2. Count total number of errors\n# 3. Extract only timestamps and error messages\n# 4. Find unique error types\n\n# Your commands here:',
+    starterCode: `#!/bin/bash
+
+# Create a sample log file for analysis
+cat > server.log << EOF
+2024-01-15 10:30:15 INFO User login successful: user123
+2024-01-15 10:31:22 ERROR Database connection failed
+2024-01-15 10:32:10 INFO User logout: user123
+2024-01-15 10:33:45 ERROR API timeout: /api/users
+2024-01-15 10:34:12 WARN Memory usage high: 85%
+2024-01-15 10:35:30 ERROR Database connection failed
+EOF
+
+# Your analysis commands:
+# 1. Find all ERROR entries
+# 2. Count total number of errors
+# 3. Extract only timestamps and error messages
+# 4. Find unique error types
+
+# Your commands here:`,
+
     solution: '#!/bin/bash\n\ncat > server.log << EOF\n2024-01-15 10:30:15 INFO User login successful: user123\n2024-01-15 10:31:22 ERROR Database connection failed\n2024-01-15 10:32:10 INFO User logout: user123\n2024-01-15 10:33:45 ERROR API timeout: /api/users\n2024-01-15 10:34:12 WARN Memory usage high: 85%\n2024-01-15 10:35:30 ERROR Database connection failed\nEOF\n\ngrep "ERROR" server.log\ngrep -c "ERROR" server.log\ngrep "ERROR" server.log | awk \'{print $1, $2, $4, $5, $6, $7}\'\ngrep "ERROR" server.log | awk \'{print $4, $5, $6, $7}\' | sort -u',
     validation: {
       type: 'output',
