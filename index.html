@@ -1,13 +1,209 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DevOps for Everyone Learning Platform</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+import React, { createContext, useContext, ReactNode } from 'react';
+
+export interface Lab {
+  id: string;
+  title: string;
+  category: 'bash' | 'python' | 'ansible';
+  description: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedTime: number;
+  instructions: string;
+  starterCode: string;
+  solution: string;
+  validation: {
+    type: 'output' | 'file' | 'function';
+    expected: string;
+    description: string;
+  };
+}
+
+const labs: Lab[] = [
+  {
+    id: 'linux-bash-1',
+    title: 'Linux File System Navigation - The Foundation',
+    category: 'bash',
+    description: 'Master the Linux file system hierarchy and navigation commands. Understanding the file system is crucial for any DevOps engineer as it forms the foundation of server management.',
+    difficulty: 'beginner',
+    estimatedTime: 20,
+    instructions: 'You are a new DevOps engineer at TechCorp. Your first task is to explore the server file system and create a project directory structure. Navigate through directories, list contents, and understand file permissions.',
+    starterCode: '#!/bin/bash\n\n# Navigate and explore the Linux file system\n# 1. List all files in current directory with detailed info\n# 2. Navigate to /tmp directory\n# 3. Create a directory called "techcorp-project"\n# 4. Inside it, create subdirectories: logs, configs, scripts\n# 5. Display the current working directory\n\n# Your commands here:',
+    solution: '#!/bin/bash\n\nls -la\ncd /tmp\nmkdir -p techcorp-project/{logs,configs,scripts}\ncd techcorp-project\npwd\nls -la',
+    validation: {
+      type: 'file',
+      expected: '/tmp/techcorp-project',
+      description: 'Verify directory structure creation and navigation'
+    }
+  },
+  {
+    id: 'linux-bash-2',
+    title: 'File Permissions and Ownership - Security Fundamentals',
+    category: 'bash',
+    description: 'Learn Linux file permissions and ownership - critical security concepts used in production servers, CI/CD pipelines, and container deployments.',
+    difficulty: 'beginner',
+    estimatedTime: 25,
+    instructions: 'As a DevOps engineer, you need to secure application files. Create a deployment script with proper permissions, make it executable, and set appropriate ownership.',
+    starterCode: '#!/bin/bash\n\n# File permissions and ownership management\n# 1. Create a file called "deploy.sh"\n# 2. Add execute permission for owner\n# 3. Create a config file "app.conf" with read-only permissions\n# 4. Display permissions of both files\n\n# Your commands here:',
+    solution: '#!/bin/bash\n\ntouch deploy.sh\nchmod u+x deploy.sh\ntouch app.conf\nchmod 644 app.conf\nls -la deploy.sh app.conf',
+    validation: {
+      type: 'output',
+      expected: 'permissions set correctly',
+      description: 'Check if files have correct permissions set'
+    }
+  },
+  {
+    id: 'linux-bash-3',
+    title: 'Text Processing with Grep and Awk - Log Analysis',
+    category: 'bash',
+    description: 'Master text processing tools essential for log analysis, monitoring, and troubleshooting in production environments.',
+    difficulty: 'beginner',
+    estimatedTime: 30,
+    instructions: 'You are investigating a production issue. Analyze server logs to find error patterns, count occurrences, and extract specific information using grep, awk, and other text processing tools.',
+    starterCode: '#!/bin/bash\n\n# Create a sample log file for analysis\ncat > server.log << EOF\n2024-01-15 10:30:15 INFO User login successful: user123\n2024-01-15 10:31:22 ERROR Database connection failed\n2024-01-15 10:32:10 INFO User logout: user123\n2024-01-15 10:33:45 ERROR API timeout: /api/users\n2024-01-15 10:34:12 WARN Memory usage high: 85%\n2024-01-15 10:35:30 ERROR Database connection failed\nEOF\n\n# Your analysis commands:\n# 1. Find all ERROR entries\n# 2. Count total number of errors\n# 3. Extract only timestamps and error messages\n# 4. Find unique error types\n\n# Your commands here:',
+    solution: '#!/bin/bash\n\ncat > server.log << EOF\n2024-01-15 10:30:15 INFO User login successful: user123\n2024-01-15 10:31:22 ERROR Database connection failed\n2024-01-15 10:32:10 INFO User logout: user123\n2024-01-15 10:33:45 ERROR API timeout: /api/users\n2024-01-15 10:34:12 WARN Memory usage high: 85%\n2024-01-15 10:35:30 ERROR Database connection failed\nEOF\n\ngrep "ERROR" server.log\ngrep -c "ERROR" server.log\ngrep "ERROR" server.log | awk \'{print $1, $2, $4, $5, $6, $7}\'\ngrep "ERROR" server.log | awk \'{print $4, $5, $6, $7}\' | sort -u',
+    validation: {
+      type: 'output',
+      expected: 'error analysis complete',
+      description: 'Verify log analysis and text processing commands'
+    }
+  },
+  {
+    id: 'linux-bash-4',
+    title: 'Process Management and System Monitoring',
+    category: 'bash',
+    description: 'Learn process management commands crucial for system administration, troubleshooting, and performance monitoring in production environments.',
+    difficulty: 'beginner',
+    estimatedTime: 25,
+    instructions: 'A production server is running slowly. Use process management commands to identify resource-intensive processes, monitor system resources, and manage running services.',
+    starterCode: '#!/bin/bash\n\n# Process management and system monitoring\n# 1. Display all running processes\n# 2. Show processes sorted by CPU usage\n# 3. Display memory usage information\n# 4. Show disk usage of current directory\n# 5. Display system uptime and load average\n\n# Your commands here:',
+    solution: '#!/bin/bash\n\nps aux\nps aux --sort=-%cpu | head -10\nfree -h\ndf -h .\nuptime',
+    validation: {
+      type: 'output',
+      expected: 'system monitoring complete',
+      description: 'Verify process and system monitoring commands'
+    }
+  },
+  {
+    id: 'linux-bash-5',
+    title: 'Environment Variables and Shell Configuration',
+    category: 'bash',
+    description: 'Master environment variables and shell configuration - essential for application deployment, CI/CD pipelines, and containerized environments.',
+    difficulty: 'beginner',
+    estimatedTime: 30,
+    instructions: 'Configure environment variables for a microservice deployment. Set up PATH, application-specific variables, and create a configuration script that other team members can source.',
+    starterCode: '#!/bin/bash\n\n# Environment variables and shell configuration\n# 1. Set environment variables for APP_ENV, APP_PORT, and DATABASE_URL\n# 2. Add a custom directory to PATH\n# 3. Create an alias for a common command\n# 4. Display all environment variables containing "APP"\n# 5. Create a script that exports these variables\n\n# Your commands here:',
+    solution: '#!/bin/bash\n\nexport APP_ENV="production"\nexport APP_PORT="8080"\nexport DATABASE_URL="postgresql://localhost:5432/myapp"\nexport PATH="$PATH:/opt/myapp/bin"\nalias ll="ls -la"\nenv | grep APP\necho \'export APP_ENV="production"\' > app_env.sh\necho \'export APP_PORT="8080"\' >> app_env.sh\necho \'export DATABASE_URL="postgresql://localhost:5432/myapp"\' >> app_env.sh',
+    validation: {
+      type: 'output',
+      expected: 'environment configured',
+      description: 'Verify environment variable configuration'
+    }
+  },
+  {
+    id: 'linux-bash-6',
+    title: 'Advanced Scripting - Loops and Conditionals',
+    category: 'bash',
+    description: 'Build advanced bash scripts with loops and conditionals - essential for automation, deployment scripts, and infrastructure management.',
+    difficulty: 'intermediate',
+    estimatedTime: 35,
+    instructions: 'Create an automated backup script that checks if directories exist, loops through multiple databases, and handles different scenarios with conditional logic.',
+    starterCode: '#!/bin/bash\n\n# Advanced bash scripting with loops and conditionals\n# Create a backup script that:\n# 1. Checks if backup directory exists, creates if not\n# 2. Loops through a list of databases\n# 3. For each database, check if it exists\n# 4. Create a timestamped backup file\n# 5. Display success/failure messages\n\n# Database list\ndatabases=("userdb" "productdb" "orderdb")\nbackup_dir="/tmp/backups"\n\n# Your script here:',
+    solution: '#!/bin/bash\n\ndatabases=("userdb" "productdb" "orderdb")\nbackup_dir="/tmp/backups"\n\nif [ ! -d "$backup_dir" ]; then\n    mkdir -p "$backup_dir"\n    echo "Created backup directory: $backup_dir"\nfi\n\nfor db in "${databases[@]}"; do\n    timestamp=$(date +"%Y%m%d_%H%M%S")\n    backup_file="$backup_dir/${db}_backup_$timestamp.sql"\n    \n    if [ "$db" = "userdb" ] || [ "$db" = "productdb" ] || [ "$db" = "orderdb" ]; then\n        echo "Backing up $db to $backup_file"\n        echo "-- Backup of $db at $(date)" > "$backup_file"\n        echo "Backup completed successfully for $db"\n    else\n        echo "Database $db not found, skipping..."\n    fi\ndone\n\necho "Backup process completed. Files created:"\nls -la "$backup_dir"',
+    validation: {
+      type: 'output',
+      expected: 'backup process completed',
+      description: 'Verify advanced scripting with loops and conditionals'
+    }
+  },
+  {
+    id: 'linux-bash-7',
+    title: 'Network Troubleshooting and Connectivity',
+    category: 'bash',
+    description: 'Master network troubleshooting commands essential for diagnosing connectivity issues in distributed systems and microservices.',
+    difficulty: 'intermediate',
+    estimatedTime: 30,
+    instructions: 'A microservice cannot connect to its database. Use network troubleshooting commands to diagnose connectivity, check ports, and analyze network configuration.',
+    starterCode: '#!/bin/bash\n\n# Network troubleshooting and connectivity\n# Scenario: Microservice cannot connect to database on port 5432\n# 1. Check if port 5432 is listening\n# 2. Test connectivity to localhost:5432\n# 3. Display network interface information\n# 4. Show routing table\n# 5. Check DNS resolution for database host\n\n# Your diagnostic commands here:',
+    solution: '#!/bin/bash\n\necho "Checking if port 5432 is listening..."\nnetstat -tlnp | grep :5432 || echo "Port 5432 not listening"\n\necho "Testing connectivity to localhost:5432..."\ntimeout 5 bash -c "</dev/tcp/localhost/5432" && echo "Connection successful" || echo "Connection failed"\n\necho "Network interface information:"\nip addr show | grep -E "inet|UP"\n\necho "Routing table:"\nip route show\n\necho "Testing DNS resolution:"\nnslookup localhost || echo "DNS resolution test completed"',
+    validation: {
+      type: 'output',
+      expected: 'network diagnostics complete',
+      description: 'Verify network troubleshooting commands'
+    }
+  },
+  {
+    id: 'linux-bash-8',
+    title: 'Cron Jobs and Task Scheduling',
+    category: 'bash',
+    description: 'Learn task scheduling with cron - crucial for automated backups, log rotation, monitoring, and maintenance tasks in production systems.',
+    difficulty: 'intermediate',
+    estimatedTime: 25,
+    instructions: 'Set up automated tasks for a production environment: daily backups, log cleanup, and system health checks using cron jobs.',
+    starterCode: '#!/bin/bash\n\n# Cron jobs and task scheduling\n# Create cron entries for:\n# 1. Daily backup at 2 AM\n# 2. Log cleanup every Sunday at midnight\n# 3. System health check every 15 minutes\n# 4. Display current cron jobs\n\n# First, create the scripts that will be scheduled\n\n# Backup script\ncat > /tmp/daily_backup.sh << EOF\n#!/bin/bash\necho "Running daily backup at $(date)"\n# Backup commands would go here\nEOF\n\n# Log cleanup script\ncat > /tmp/log_cleanup.sh << EOF\n#!/bin/bash\necho "Cleaning up logs at $(date)"\n# Log cleanup commands would go here\nEOF\n\n# Health check script\ncat > /tmp/health_check.sh << EOF\n#!/bin/bash\necho "System health check at $(date)"\n# Health check commands would go here\nEOF\n\nchmod +x /tmp/*.sh\n\n# Your cron configuration here:',
+    solution: '#!/bin/bash\n\ncat > /tmp/daily_backup.sh << EOF\n#!/bin/bash\necho "Running daily backup at $(date)"\nEOF\n\ncat > /tmp/log_cleanup.sh << EOF\n#!/bin/bash\necho "Cleaning up logs at $(date)"\nEOF\n\ncat > /tmp/health_check.sh << EOF\n#!/bin/bash\necho "System health check at $(date)"\nEOF\n\nchmod +x /tmp/*.sh\n\necho "Creating cron entries..."\necho "0 2 * * * /tmp/daily_backup.sh" > /tmp/mycron\necho "0 0 * * 0 /tmp/log_cleanup.sh" >> /tmp/mycron\necho "*/15 * * * * /tmp/health_check.sh" >> /tmp/mycron\n\necho "Cron entries created:"\ncat /tmp/mycron\n\necho "To install: crontab /tmp/mycron"',
+    validation: {
+      type: 'output',
+      expected: 'cron jobs configured',
+      description: 'Verify cron job configuration and scheduling'
+    }
+  },
+  {
+    id: 'linux-bash-9',
+    title: 'Package Management and Software Installation',
+    category: 'bash',
+    description: 'Master package management across different Linux distributions - essential for server setup, dependency management, and software deployment.',
+    difficulty: 'intermediate',
+    estimatedTime: 30,
+    instructions: 'Set up a new server environment by installing required packages, managing repositories, and handling dependencies across different package managers.',
+    starterCode: '#!/bin/bash\n\n# Package management and software installation\n# Scenario: Setting up a new web server\n# 1. Update package repositories\n# 2. Install essential packages (curl, wget, git, htop)\n# 3. Check installed package versions\n# 4. Search for available nginx packages\n# 5. Simulate package installation (use --dry-run or similar)\n\n# Note: Commands may vary based on distribution\n# This example uses apt (Debian/Ubuntu)\n\n# Your package management commands here:',
+    solution: '#!/bin/bash\n\necho "Updating package repositories..."\napt update 2>/dev/null || echo "apt update simulated"\n\necho "Installing essential packages..."\necho "Would install: curl wget git htop"\n# apt install -y curl wget git htop\n\necho "Checking installed versions..."\necho "curl version:" && curl --version 2>/dev/null | head -1 || echo "curl not installed"\necho "git version:" && git --version 2>/dev/null || echo "git not installed"\n\necho "Searching for nginx packages..."\napt search nginx 2>/dev/null | head -5 || echo "nginx search simulated"\n\necho "Simulating nginx installation..."\napt install --dry-run nginx 2>/dev/null || echo "nginx installation simulation completed"\n\necho "Package management tasks completed"',
+    validation: {
+      type: 'output',
+      expected: 'package management completed',
+      description: 'Verify package management and installation commands'
+    }
+  },
+  {
+    id: 'linux-bash-10',
+    title: 'System Security and Hardening',
+    category: 'bash',
+    description: 'Implement security best practices and system hardening techniques - critical for production servers, compliance, and infrastructure security.',
+    difficulty: 'advanced',
+    difficulty: 'beginner',
+    estimatedTime: 20,
+    instructions: 'Write an Ansible task to create a file at "/tmp/devops.txt" with the content "DevOps is awesome!".',
+    starterCode: '---\n- name: Create file\n  hosts: localhost\n  tasks:\n    # Your task here',
+    solution: '---\n- name: Create file\n  hosts: localhost\n  tasks:\n    - name: Create DevOps file\n      file:\n        path: /tmp/devops.txt\n        state: touch\n    - name: Add content to file\n      lineinfile:\n        path: /tmp/devops.txt\n        line: "DevOps is awesome!"',
+    validation: {
+      type: 'file',
+      expected: 'DevOps is awesome!',
+      description: 'Check if /tmp/devops.txt exists with correct content'
+    }
+  }
+];
+
+interface LabsContextType {
+  labs: Lab[];
+  getLabById: (id: string) => Lab | undefined;
+  getLabsByCategory: (category: string) => Lab[];
+}
+
+const LabsContext = createContext<LabsContextType | undefined>(undefined);
+
+export function LabsProvider({ children }: { children: ReactNode }) {
+  const getLabById = (id: string) => labs.find(lab => lab.id === id);
+  const getLabsByCategory = (category: string) => labs.filter(lab => lab.category === category);
+
+  return (
+    <LabsContext.Provider value={{ labs, getLabById, getLabsByCategory }}>
+      {children}
+    </LabsContext.Provider>
+  );
+}
+
+export function useLabs() {
+  const context = useContext(LabsContext);
+  if (context === undefined) {
+    throw new Error('useLabs must be used within a LabsProvider');
+  }
+  return context;
+}

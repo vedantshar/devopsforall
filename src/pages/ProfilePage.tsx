@@ -1,13 +1,39 @@
 import React from 'react';
-import { User, Trophy, Clock, BookOpen, Calendar, Award } from 'lucide-react';
+import { User, Trophy, Clock, BookOpen, Calendar, Award, Edit, Phone, Mail, Building, Briefcase } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLabs } from '../contexts/LabsContext';
 
 export function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { labs } = useLabs();
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [formData, setFormData] = React.useState({
+    name: user?.name || '',
+    workTitle: user?.workTitle || '',
+    mobileNumber: user?.mobileNumber || '',
+    company: user?.company || '',
+    experienceLevel: user?.experienceLevel || 'beginner'
+  });
 
   if (!user) return null;
+
+  const handleSave = async () => {
+    const success = await updateProfile(formData);
+    if (success) {
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      name: user.name,
+      workTitle: user.workTitle || '',
+      mobileNumber: user.mobileNumber || '',
+      company: user.company || '',
+      experienceLevel: user.experienceLevel || 'beginner'
+    });
+    setIsEditing(false);
+  };
 
   const completedLabs = labs.filter(lab => user.completedLabs.includes(lab.id));
   const totalTime = completedLabs.reduce((acc, lab) => acc + lab.estimatedTime, 0);
@@ -78,12 +104,45 @@ export function ProfilePage() {
         {/* Profile Header */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
           <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-full">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 rounded-full">
               <User className="h-12 w-12 text-white" />
             </div>
             <div className="text-center md:text-left flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{user.name}</h1>
-              <p className="text-gray-600 mb-4">{user.email}</p>
+              <div className="flex items-center justify-center md:justify-start space-x-3 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+              </div>
+              
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-center md:justify-start text-gray-600">
+                  <Mail className="h-4 w-4 mr-2" />
+                  <span>{user.email}</span>
+                </div>
+                {user.workTitle && (
+                  <div className="flex items-center justify-center md:justify-start text-gray-600">
+                    <Briefcase className="h-4 w-4 mr-2" />
+                    <span>{user.workTitle}</span>
+                  </div>
+                )}
+                {user.company && (
+                  <div className="flex items-center justify-center md:justify-start text-gray-600">
+                    <Building className="h-4 w-4 mr-2" />
+                    <span>{user.company}</span>
+                  </div>
+                )}
+                {user.mobileNumber && (
+                  <div className="flex items-center justify-center md:justify-start text-gray-600">
+                    <Phone className="h-4 w-4 mr-2" />
+                    <span>{user.mobileNumber}</span>
+                  </div>
+                )}
+              </div>
+              
               <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600">
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
@@ -98,6 +157,89 @@ export function ProfilePage() {
           </div>
         </div>
 
+        {/* Edit Profile Modal */}
+        {isEditing && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                  <input
+                    type="text"
+                    value={formData.workTitle}
+                    onChange={(e) => setFormData({...formData, workTitle: e.target.value})}
+                    placeholder="e.g., DevOps Engineer"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                  <input
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => setFormData({...formData, company: e.target.value})}
+                    placeholder="e.g., Tech Corp"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                  <input
+                    type="tel"
+                    value={formData.mobileNumber}
+                    onChange={(e) => setFormData({...formData, mobileNumber: e.target.value})}
+                    placeholder="e.g., +1 234 567 8900"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Experience Level</label>
+                  <select
+                    value={formData.experienceLevel}
+                    onChange={(e) => setFormData({...formData, experienceLevel: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                    <option value="expert">Expert</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 mt-6">
+                <button
+                  onClick={handleSave}
+                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Progress Stats */}
           <div className="lg:col-span-2 space-y-6">
@@ -107,7 +249,7 @@ export function ProfilePage() {
               
               <div className="grid md:grid-cols-3 gap-6 mb-6">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">{completedLabs.length}</div>
+                  <div className="text-2xl font-bold text-purple-600 mb-1">{completedLabs.length}</div>
                   <div className="text-sm text-gray-600">Labs Completed</div>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
@@ -115,7 +257,7 @@ export function ProfilePage() {
                   <div className="text-sm text-gray-600">Minutes Practiced</div>
                 </div>
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">
+                  <div className="text-2xl font-bold text-indigo-600 mb-1">
                     {Math.round((completedLabs.length / labs.length) * 100) || 0}%
                   </div>
                   <div className="text-sm text-gray-600">Overall Progress</div>
@@ -135,8 +277,9 @@ export function ProfilePage() {
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className={`h-2 rounded-full transition-all duration-300 ${
-                          category === 'bash' ? 'bg-green-500' :
-                          category === 'python' ? 'bg-blue-500' : 'bg-red-500'
+                          category === 'linux-bash' ? 'bg-green-500' :
+                          category === 'python' ? 'bg-blue-500' : 
+                          category === 'docker' ? 'bg-blue-600' : 'bg-purple-500'
                         }`}
                         style={{ width: `${progress.total > 0 ? (progress.completed / progress.total) * 100 : 0}%` }}
                       ></div>
